@@ -13,19 +13,19 @@ export VAGRANT_POWERSHELL_VERSION_DETECTION_TIMEOUT=10
 
 
 vup() {
-    vagrant up $@ --parallel
+    grep "'name' =>" Vagrantfile | awk -F"'" '{print $6}' | xargs -P6 -I {} vagrant up {}
+    if [[ -f ./.vagrant/ssh_config ]];then
+        rm ./.vagrant/ssh_config
+    fi
+    "${HOME}/dotfiles/vagrant/vm-ssh.sh" $@
 }
 
 vreload() {
-    vagrant reload $@
+    vagrant reload --parallel $@
 }
 
 vhalt() {
-    vagrant halt $@
-}
-
-vdestroy() {
-    vagrant destroy -f $@
+   grep "'name' =>" Vagrantfile | awk -F"'" '{print $6}' | xargs -P6 -I {} vagrant halt {}
 }
 
 vssh() {

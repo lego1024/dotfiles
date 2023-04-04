@@ -26,6 +26,8 @@ alias reload_bashrc="source ~/.bashrc"
 ## pseudo tree command
 alias tree="find . -print | sed -e 's;[^/]*/;|__;g;s;__|; |;g'"
 
+##
+alias cls='echo -e "\ec\e[3J"'
 
 ## git
 alias gs="git status"
@@ -37,7 +39,7 @@ fast_git_ps1 ()
 #PS1='\[\033]0;$MSYSTEM:\w\007\033[32m\]\u@\h \[\033[33m\w$(fast_git_ps1)\033[0m\]$ '
 
 # ultra fast git
-PS1='\[\033[33m\w\033[0m\]\n$ '
+#PS1='\[\033[33m\w\033[0m\]\n$ '
 
 
 # vim
@@ -58,3 +60,85 @@ explainshell() {
     fi
   
  }
+
+to_cynwin_path() {
+    echo $1 | sed  's/\\/\//g' | sed 's/C:/\/c/'
+}
+
+
+vdiff () {
+    if [ "${#}" -ne 2 ] ; then
+        echo "vdiff requires two arguments"
+        echo "  comparing dirs:  vdiff dir_a dir_b"
+        echo "  comparing files: vdiff file_a file_b"
+        return 1
+    fi
+
+    local left="${1}"
+    local right="${2}"
+
+    if [ -d "${left}" ] && [ -d "${right}" ]; then
+        vim +"DirDiff ${left} ${right}"
+    else
+        vim -d "${left}" "${right}"
+    fi
+}
+
+weather () {  
+  curl "https://wttr.in/$1" -k
+}
+
+
+function mkscript () {
+    local file="${1}"
+
+    [ -z "${file}" ] && { echo "Please supply a script name to create"; return 1; }
+    [ -f "${file}" ] && { echo "${file} already exists, aborting"; return 1; }
+
+    mkdir -p "$(dirname "${file}")"
+
+    cat > "${file}" << EOF
+#!/usr/bin/env bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+echo "hello world"
+EOF
+
+    chmod +x "${file}"
+}
+
+
+function note () { 
+  yyyymmdd=$(date +%Y%m%d)
+  title=""
+
+  if [ ! -z "${1}" ]; then
+    title="${yyyymmdd}_$(echo "$@" | sed 's/ /_/g')"
+  fi
+  
+  my_new_note="~/Documents/Notes/${title}.md"
+  if [ -f ${file} ]; then
+    cat > "${file}" <<EOF
+---
+tags:
+  - 
+--- 
+#$@
+ 
+EOF
+  fi
+
+  vim ${file}
+
+}
+
+alias ll="ls -alF"
+alias la="ls -A"
+alias l="ls -CF"
+alias ls="ls --color=auto"
+alias grep="grep --color=auto"
+alias fgrep="fgrep --color=auto"
+alias egrep="egrep --color=auto"
