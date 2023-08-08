@@ -14,10 +14,10 @@ export VAGRANT_POWERSHELL_VERSION_DETECTION_TIMEOUT=10
 
 vup() {
     grep "'name' =>" Vagrantfile | awk -F"'" '{print $6}' | xargs -P6 -I {} vagrant up {}
-    if [[ -f ./.vagrant/ssh_config ]];then
+    if [[ -f ./.vagrant/ssh_config ]];
+    then
         rm ./.vagrant/ssh_config
     fi
-    "${HOME}/dotfiles/vagrant/vm-ssh.sh" $@
 }
 
 vreload() {

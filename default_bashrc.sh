@@ -142,3 +142,22 @@ alias ls="ls --color=auto"
 alias grep="grep --color=auto"
 alias fgrep="fgrep --color=auto"
 alias egrep="egrep --color=auto"
+
+
+function mvn_set_version() {
+    if [ ! -e "pom.xml" ]; then
+        echo -e "${RED}No pom.xml file found${WHITE}"
+        return 2
+    fi
+    if [ -z "$1" ]; then
+        echo -e "${RED}usage $0 <la_nouvelle_version>${white}"
+        return 1
+    fi   
+    echo "mvn versions:set -DnewVersion=$1"
+    
+    
+    read -p "Voulez-vous continuer ? ([Y]es/no): " confirmation
+    if [[ "${confirmation}" == "yes" ]] || [[ "${confirmation}" == "Y" ]] || [[ -z "${confirmation}" ]];  then
+       mvn versions:set -DnewVersion=$1
+    fi   
+}
